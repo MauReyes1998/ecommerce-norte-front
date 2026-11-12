@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light; }
+  body { @apply font-sans; }
+  *:focus-visible { @apply outline-none ring-2 ring-ink ring-offset-2; }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-none px-5 py-3 text-sm font-semibold uppercase tracking-wide transition disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply btn bg-ink text-white hover:bg-neutral-800; }
+  .btn-outline { @apply btn border border-ink bg-white text-ink hover:bg-ink hover:text-white; }
+  .btn-ghost { @apply btn text-ink hover:bg-neutral-100; }
+  .input { @apply w-full border border-line bg-white px-3 py-2.5 text-sm placeholder:text-neutral-400 focus:border-ink; }
+  .label { @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-muted; }
+  .price-sale { @apply text-accent; }
+}
