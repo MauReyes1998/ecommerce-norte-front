@@ -84,6 +84,7 @@ async function request<T>(method: string, path: string, opts: Options = {}): Pro
 export const http = {
   get: <T>(path: string, query?: object) => request<T>('GET', path, { query }),
   post: <T>(path: string, body?: unknown) => request<T>('POST', path, { body }),
+  put: <T>(path: string, body?: unknown) => request<T>('PUT', path, { body }),
   patch: <T>(path: string, body?: unknown) => request<T>('PATCH', path, { body }),
   delete: <T>(path: string) => request<T>('DELETE', path),
   upload: <T>(path: string, form: FormData) => request<T>('POST', path, { form }),

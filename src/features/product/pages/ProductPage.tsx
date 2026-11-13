@@ -12,6 +12,8 @@ import { useProduct, useRelated } from '../hooks/useProduct';
 import { Gallery } from '../components/Gallery';
 import { VariantPicker } from '../components/VariantPicker';
 import { SizeGuide } from '../components/SizeGuide';
+import { StockAlertForm } from '../components/StockAlertForm';
+import { Reviews } from '../components/Reviews';
 
 export default function ProductPage() {
   const { slug = '' } = useParams();
@@ -88,6 +90,7 @@ export default function ProductPage() {
           <Button full onClick={addToCart} disabled={!!variant && variant.stock === 0}>
             {variant && variant.stock === 0 ? 'Agotado' : 'Agregar a la bolsa'}
           </Button>
+          {variant && variant.stock === 0 && <StockAlertForm key={variant.id} slug={product.slug} variantId={variant.id} size={variant.size} />}
 
           <p className="flex items-center gap-2 text-sm text-muted"><Truck className="h-4 w-4" /> Envío gratis desde {formatMXN(FREE_SHIPPING_FROM)} · 3 a 5 días hábiles</p>
 
@@ -102,6 +105,8 @@ export default function ProductPage() {
           </details>
         </div>
       </div>
+
+      <Reviews slug={product.slug} />
 
       {related.data && related.data.length > 0 && (
         <section className="mt-20">
