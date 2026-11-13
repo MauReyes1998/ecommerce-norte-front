@@ -1,12 +1,20 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Download } from 'lucide-react';
 import { formatMXN, ORDER_STATUS_LABEL } from '@/shared/lib/format';
-import { Badge, ErrorBox, Skeleton } from '@/shared/ui';
+import { Badge, Button, ErrorBox, Skeleton, useToast } from '@/shared/ui';
 import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
-import { DashboardRange } from '../api/admin.api';
+import { adminApi, DashboardRange } from '../api/admin.api';
 import { useDashboard } from '../hooks/useAdmin';
 import { SalesChart } from '../components/SalesChart';
+import { downloadCsv } from '../lib/downloadCsv';
+
+type ReportType = Parameters<typeof adminApi.reportCsvUrl>[0];
+const REPORTS: { type: ReportType; label: string }[] = [
+  { type: 'dias', label: 'Por día' },
+  { type: 'productos', label: 'Por producto' },
+  { type: 'categorias', label: 'Por categoría' },
+];
 
 const Stat = ({ label, value, sub, delta }: { label: string; value: string; sub?: string; delta?: number | null }) => (
   <div className="border border-line bg-white p-5">
@@ -27,6 +35,13 @@ export default function DashboardPage() {
   useDocumentTitle('Dashboard');
   const [range, setRange] = useState<DashboardRange>(30);
   const { data, isLoading } = useDashboard(range);
+  const toast = useToast((s) => s.push);
+  const [exporting, setExporting] = useState<ReportType | null>(null);
+  const exportReport = async (type: ReportType) => {
+    setExporting(type);
+    try { await downloadCsv(adminApi.reportCsvUrl(type, range), `ventas-${type}-${range}dias.csv`); } catch (e) { toast((e as Error).message, 'error'); }
+    setExporting(null);
+  };
   if (isLoading || !data) return <div className="grid gap-4 sm:grid-cols-3">{[1, 2, 3, 4, 5, 6].map((i) => <Skeleton key={i} className="h-24" />)}</div>;
   // Si el backend es una versión anterior, estas listas vienen vacías en lugar de tronar.
   const salesByCategory = data.salesByCategory ?? [];
@@ -48,10 +63,19 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <div className="inline-flex border border-line bg-white text-sm" role="group" aria-label="Rango">
-          {([7, 30, 90] as DashboardRange[]).map((r) => (
-            <button key={r} onClick={() => setRange(r)} aria-pressed={range === r} className={`px-3 py-1.5 ${range === r ? 'bg-ink text-white' : 'hover:bg-neutral-100'}`}>{r} días</button>
-          ))}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex border border-line bg-white text-sm" role="group" aria-label="Rango">
+            {([7, 30, 90] as DashboardRange[]).map((r) => (
+              <button key={r} onClick={() => setRange(r)} aria-pressed={range === r} className={`px-3 py-1.5 ${range === r ? 'bg-ink text-white' : 'hover:bg-neutral-100'}`}>{r} días</button>
+            ))}
+          </div>
+          <div className="inline-flex gap-1" role="group" aria-label="Descargar reporte">
+            {REPORTS.map((r) => (
+              <Button key={r.type} variant="outline" className="!px-2 !py-1.5 text-xs" onClick={() => exportReport(r.type)} loading={exporting === r.type} title={`Descargar ventas ${r.label.toLowerCase()} (${range} días) en CSV`}>
+                <Download className="h-3.5 w-3.5" /> {r.label}
+              </Button>
+            ))}
+          </div>
         </div>
       </header>
 
