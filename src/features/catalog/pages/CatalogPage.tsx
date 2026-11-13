@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { SlidersHorizontal } from 'lucide-react';
 import { Gender } from '@/shared/types';
 import { Drawer, ErrorBox, Pagination } from '@/shared/ui';
-import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
+import { useSeo } from '@/shared/hooks/useDocumentTitle';
 import { useFavorites } from '@/features/account';
 import { useCategories, useFilterOptions, useProducts } from '../hooks/useCatalog';
 import { useCatalogParams } from '../hooks/useCatalogParams';
@@ -39,7 +39,11 @@ export default function CatalogPage({ mode }: { mode?: 'search' } = {}) {
   }, [categories, categoria]);
 
   const title = mode === 'search' ? `Resultados para "${filters.search ?? ''}"` : TITLES[categoria ?? ''] ?? current?.name ?? 'Toda la tienda';
-  useDocumentTitle(title);
+  useSeo({
+    title,
+    description: mode === 'search' ? undefined : `${title} en NORTE: ropa urbana para hombre y mujer con envíos a todo México.`,
+    noindex: mode === 'search', // los resultados de búsqueda no se indexan
+  });
 
   const subcats = current && 'children' in current && current.children.length ? current.children : (current as { parent?: { children: { id: string; slug: string; name: string }[] } })?.parent?.children;
 

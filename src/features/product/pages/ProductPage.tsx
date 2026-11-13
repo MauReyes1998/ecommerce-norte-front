@@ -4,7 +4,7 @@ import { Heart, Truck } from 'lucide-react';
 import { ProductVariant } from '@/shared/types';
 import { Button, ErrorBox, Price, Skeleton, useToast } from '@/shared/ui';
 import { cn, formatMXN, GENDER_LABEL } from '@/shared/lib/format';
-import { useDocumentTitle } from '@/shared/hooks/useDocumentTitle';
+import { useSeo } from '@/shared/hooks/useDocumentTitle';
 import { useCart, FREE_SHIPPING_FROM } from '@/features/cart';
 import { useFavorites } from '@/features/account';
 import { ProductGrid } from '@/features/catalog';
@@ -20,7 +20,13 @@ export default function ProductPage() {
   const cart = useCart();
   const toast = useToast((s) => s.push);
   const favorites = useFavorites();
-  useDocumentTitle(product?.name);
+  useSeo({
+    title: product?.name,
+    description: product ? `${product.name} desde ${formatMXN(product.currentPrice)}. ${product.description}` : undefined,
+    image: product?.images[0]?.url,
+    path: `/producto/${slug}`,
+    type: 'product',
+  });
 
   const [color, setColor] = useState<string | null>(null);
   const [size, setSize] = useState<string | null>(null);

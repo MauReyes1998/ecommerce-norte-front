@@ -23,7 +23,7 @@ export default function OrderDetailPage() {
 
   const a = order.shippingAddress;
   const banner =
-    order.status === 'PAGADO' || order.paymentStatus === 'APPROVED' ? { icon: CheckCircle2, cls: 'bg-green-50 text-green-800', text: 'Pago confirmado. Te avisaremos por correo cuando lo enviemos.' }
+    order.status === 'PAGADO' || order.paymentStatus === 'APPROVED' ? { icon: CheckCircle2, cls: 'bg-green-50 text-green-800', text: order.deliveryMethod === 'RECOGER' ? 'Pago confirmado. Te avisaremos por correo cuando esté listo para recoger.' : 'Pago confirmado. Te avisaremos por correo cuando lo enviemos.' }
     : pago === 'error' || order.paymentStatus === 'REJECTED' ? { icon: XCircle, cls: 'bg-red-50 text-accent', text: 'El pago no se completó. Puedes intentarlo de nuevo.' }
     : pago === 'exito' ? { icon: Clock, cls: 'bg-amber-50 text-amber-800', text: 'Estamos confirmando tu pago con Mercado Pago…' }
     : order.status === 'PENDIENTE' ? { icon: Clock, cls: 'bg-amber-50 text-amber-800', text: 'Tu pedido está pendiente de pago.' } : null;
@@ -63,8 +63,8 @@ export default function OrderDetailPage() {
 
       <div className="mt-6 grid gap-8 sm:grid-cols-2">
         <div className="text-sm">
-          <h2 className="label">Envío a</h2>
-          <p className="font-semibold">{a.fullName}</p>
+          <h2 className="label">{order.deliveryMethod === 'RECOGER' ? 'Recoger en tienda' : 'Envío a'}</h2>
+          <p className="font-semibold">{order.deliveryMethod === 'RECOGER' ? `Recoge: ${a.fullName}` : a.fullName}</p>
           <p>{a.street} {a.extNumber}{a.intNumber ? ` int. ${a.intNumber}` : ''}</p>
           <p>{a.neighborhood}, {a.city}</p>
           <p>{a.state}, CP {a.postalCode}</p>
@@ -72,7 +72,13 @@ export default function OrderDetailPage() {
         </div>
         <dl className="space-y-1 text-sm">
           <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatMXN(order.subtotal)}</dd></div>
-          <div className="flex justify-between"><dt>Envío</dt><dd>{order.shippingCost === 0 ? 'Gratis' : formatMXN(order.shippingCost)}</dd></div>
+          {(order.discount ?? 0) > 0 && (
+            <div className="flex justify-between text-green-700"><dt>Descuento{order.couponCode ? ` (${order.couponCode})` : ''}</dt><dd>-{formatMXN(order.discount ?? 0)}</dd></div>
+          )}
+          <div className="flex justify-between">
+            <dt>{order.deliveryMethod === 'RECOGER' ? 'Entrega' : 'Envío'}</dt>
+            <dd>{order.deliveryMethod === 'RECOGER' ? 'Recoger en tienda' : order.shippingCost === 0 ? 'Gratis' : formatMXN(order.shippingCost)}</dd>
+          </div>
           <div className="flex justify-between border-t border-line pt-2 text-base font-bold"><dt>Total</dt><dd>{formatMXN(order.total)}</dd></div>
         </dl>
       </div>

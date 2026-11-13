@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { OrderStatus } from '@/shared/types';
-import { adminApi, CategoryInput, DashboardRange, ProductInput } from '../api/admin.api';
+import { adminApi, CategoryInput, CouponInput, DashboardRange, ProductInput } from '../api/admin.api';
 
 export const useDashboard = (range: DashboardRange) => useQuery({ queryKey: ['admin', 'dashboard', range], queryFn: () => adminApi.dashboard(range), refetchInterval: 60_000, placeholderData: keepPreviousData });
 export const useAdminOrder = (id?: string | null) => useQuery({ queryKey: ['admin', 'order', id], queryFn: () => adminApi.order(id!), enabled: !!id });
@@ -34,6 +34,17 @@ export function useCategoryMutations() {
     create: useMutation({ mutationFn: (b: CategoryInput) => adminApi.createCategory(b), onSuccess: done }),
     update: useMutation({ mutationFn: ({ id, ...b }: Partial<CategoryInput> & { id: string }) => adminApi.updateCategory(id, b), onSuccess: done }),
     remove: useMutation({ mutationFn: adminApi.deleteCategory, onSuccess: done }),
+  };
+}
+
+export const useAdminCoupons = () => useQuery({ queryKey: ['admin', 'coupons'], queryFn: adminApi.coupons });
+export function useCouponMutations() {
+  const qc = useQueryClient();
+  const done = () => qc.invalidateQueries({ queryKey: ['admin', 'coupons'] });
+  return {
+    create: useMutation({ mutationFn: (b: CouponInput) => adminApi.createCoupon(b), onSuccess: done }),
+    update: useMutation({ mutationFn: ({ id, ...b }: Partial<CouponInput> & { id: string }) => adminApi.updateCoupon(id, b), onSuccess: done }),
+    remove: useMutation({ mutationFn: adminApi.deleteCoupon, onSuccess: done }),
   };
 }
 

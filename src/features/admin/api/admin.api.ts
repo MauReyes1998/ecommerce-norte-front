@@ -1,5 +1,14 @@
 import { http, Paged } from '@/shared/lib/http';
-import { Gender, Order, OrderStatus, ProductImage } from '@/shared/types';
+import { CouponType, Gender, Order, OrderStatus, ProductImage } from '@/shared/types';
+
+export interface AdminCoupon {
+  id: string; code: string; type: CouponType; value: number; minSubtotal: number | null;
+  startsAt: string | null; endsAt: string | null; maxUses: number | null; usedCount: number; isActive: boolean; createdAt: string;
+}
+export interface CouponInput {
+  code: string; type: CouponType; value?: number; minSubtotal?: number | null;
+  startsAt?: string | null; endsAt?: string | null; maxUses?: number | null; isActive?: boolean;
+}
 
 export interface AdminVariant {
   id?: string; sku: string; size: string; color: string; colorHex?: string | null; stock: number; price?: number | null; salePrice?: number | null; isActive?: boolean;
@@ -36,7 +45,12 @@ export interface DashboardStats {
 }
 
 export const adminApi = {
+  coupons: () => http.get<AdminCoupon[]>('/admin/coupons'),
+  createCoupon: (b: CouponInput) => http.post<AdminCoupon>('/admin/coupons', b),
+  updateCoupon: (id: string, b: Partial<CouponInput>) => http.patch<AdminCoupon>(`/admin/coupons/${id}`, b),
+  deleteCoupon: (id: string) => http.delete<void>(`/admin/coupons/${id}`),
   dashboard: (range: DashboardRange) => http.get<DashboardStats>('/admin/dashboard', { range }),
+  reportCsvUrl: (type: 'dias' | 'productos' | 'categorias', range: DashboardRange) => `/admin/reports/${type}.csv?range=${range}`,
   bulkProducts: (ids: string[], data: { isActive?: boolean; isFeatured?: boolean }) => http.patch<{ updated: number }>('/admin/products/bulk', { ids, ...data }),
   duplicateProduct: (id: string) => http.post<AdminProduct>(`/admin/products/${id}/duplicate`),
   setVariantStock: (variantId: string, stock: number) => http.patch<{ id: string; stock: number }>(`/admin/variants/${variantId}/stock`, { stock }),

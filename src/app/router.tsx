@@ -27,6 +27,7 @@ const AdminProductsPage = lazy(() => import('@/features/admin').then((m) => ({ d
 const AdminProductFormPage = lazy(() => import('@/features/admin').then((m) => ({ default: m.AdminProductFormPage })));
 const AdminCategoriesPage = lazy(() => import('@/features/admin').then((m) => ({ default: m.AdminCategoriesPage })));
 const AdminOrdersPage = lazy(() => import('@/features/admin').then((m) => ({ default: m.AdminOrdersPage })));
+const AdminCouponsPage = lazy(() => import('@/features/admin').then((m) => ({ default: m.AdminCouponsPage })));
 
 const Loading = () => <div className="container-x py-20 text-center text-sm text-muted">Cargando…</div>;
 const NotFound = () => (
@@ -82,6 +83,7 @@ const router = createBrowserRouter([
         { path: 'categorias', element: <AdminCategoriesPage /> },
         { path: 'pedidos', element: <AdminOrdersPage /> },
         { path: 'clientes', element: <AdminCustomersPage /> },
+        { path: 'cupones', element: <AdminCouponsPage /> },
       ],
     }],
   },

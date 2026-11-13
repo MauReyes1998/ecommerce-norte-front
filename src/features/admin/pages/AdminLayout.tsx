@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Package, ShoppingCart, Store, Tags, Users } from 'lucide-react';
+import { LayoutDashboard, LogOut, Package, ShoppingCart, Store, Tags, Ticket, Users } from 'lucide-react';
 import { useAuth } from '@/features/auth';
 import { Toaster } from '@/shared/ui';
 import { cn } from '@/shared/lib/format';
@@ -10,6 +10,7 @@ const links = [
   { to: '/admin/categorias', label: 'Categorías', icon: Tags },
   { to: '/admin/pedidos', label: 'Pedidos', icon: ShoppingCart },
   { to: '/admin/clientes', label: 'Clientes', icon: Users },
+  { to: '/admin/cupones', label: 'Cupones', icon: Ticket },
 ];
 
 export default function AdminLayout() {

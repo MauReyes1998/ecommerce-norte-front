@@ -75,6 +75,9 @@ export interface ShippingAddress {
 }
 
 export type OrderStatus = 'PENDIENTE' | 'PAGADO' | 'ENVIADO' | 'ENTREGADO' | 'CANCELADO';
+/** ENVIO = paquetería a domicilio; RECOGER = recoger en tienda (sin costo de envío). */
+export type DeliveryMethod = 'ENVIO' | 'RECOGER';
+export type CouponType = 'PERCENT' | 'FIXED' | 'FREE_SHIPPING';
 
 export interface OrderItem {
   id: string;
@@ -100,6 +103,10 @@ export interface Order {
   shippingCost: number;
   total: number;
   shippingAddress: ShippingAddress;
+  deliveryMethod?: DeliveryMethod;
+  /** Descuento del cupón, ya restado en total. */
+  discount?: number;
+  couponCode?: string | null;
   paidAt: string | null;
   trackingCarrier?: string | null;
   trackingNumber?: string | null;

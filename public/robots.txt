@@ -1,0 +1,13 @@
+# NORTE · robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /cuenta
+Disallow: /checkout
+Disallow: /pedido/
+Disallow: /pago/
+Disallow: /buscar
+
+# Cambia el dominio por el de producción. /sitemap.xml lo genera el backend;
+# el proxy del front debe pasarlo al API igual que /uploads (ver vite.config.ts).
+Sitemap: https://TU-DOMINIO.com/sitemap.xml

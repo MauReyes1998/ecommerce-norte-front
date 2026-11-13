@@ -65,13 +65,14 @@ export function OrderDrawer({ id, onClose }: { id: string | null; onClose: () =>
             </ul>
             <dl className="mt-2 space-y-1">
               <div className="flex justify-between"><dt>Subtotal</dt><dd>{formatMXN(o.subtotal)}</dd></div>
-              <div className="flex justify-between"><dt>Envío</dt><dd>{formatMXN(o.shippingCost)}</dd></div>
+              {(o.discount ?? 0) > 0 && <div className="flex justify-between text-green-700"><dt>Descuento{o.couponCode ? ` (${o.couponCode})` : ''}</dt><dd>-{formatMXN(o.discount ?? 0)}</dd></div>}
+              <div className="flex justify-between"><dt>Envío</dt><dd>{o.deliveryMethod === 'RECOGER' ? 'Recoger en tienda' : formatMXN(o.shippingCost)}</dd></div>
               <div className="flex justify-between border-t border-line pt-1 font-bold"><dt>Total</dt><dd>{formatMXN(o.total)}</dd></div>
             </dl>
           </section>
 
           <section>
-            <p className="label">Cliente y envío</p>
+            <p className="label">{o.deliveryMethod === 'RECOGER' ? 'Cliente · Recoge en tienda' : 'Cliente y envío'}</p>
             <p className="font-semibold">{o.shippingAddress.fullName} <span className="font-normal text-muted">· {o.email}{o.userId ? '' : ' · invitado'}</span></p>
             <p>{o.shippingAddress.street} {o.shippingAddress.extNumber}{o.shippingAddress.intNumber ? ` int. ${o.shippingAddress.intNumber}` : ''}</p>
             <p>{o.shippingAddress.neighborhood}, {o.shippingAddress.city}, {o.shippingAddress.state}, CP {o.shippingAddress.postalCode}</p>
